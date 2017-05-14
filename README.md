@@ -1,9 +1,32 @@
 # anyvalidation
 一个可重用、可扩展的模型校验模块
 
+* 校验函数可扩展，可以自己定义符合ValidatorFn接口的校验函数
+* 校验函数高度重用，一个复杂的校验逻辑可由基本校验函数组合而成
+* 与数据模型解耦，支持任意数据模型
+* 校验配置可序列化，即支持从后端传入校验逻辑 
+
 ***
 ## how to use
-#### use validatorFn api
+#### validatorFn
+validatorFn 是最基本的校验函数，它必须满足如下接口：
+>ValidatorFn :: param -> data -> errMsg
+
+其中，param生成校验函数的参数；
+     data表示被校验的数据；
+     errMsg表示返回的错误信息，如果没有错则返回undefined
+
+比如小于等于的校验函数如下：
+
+>lessEqualThan = function(num) {
+    return function (data) {
+        if (data > num) {
+            return "必须小于等于" + num;
+        }
+    }
+>}
+
+比如，我们要校验某个输入是数字，且范围为[1, 9999999999], 则可写成如下：
 
     console.log("/----------------- validatorFn api -------------------------/");
     var validator = prefix("单次购买下限", some(isInteger(), largeEqualThan(1), lessEqualThan(9999999999)));
