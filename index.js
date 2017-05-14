@@ -35,4 +35,4 @@ var V = {
 
 
 
-module.exports.V = V;
+module.exports = V;

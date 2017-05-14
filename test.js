@@ -1,4 +1,4 @@
-var V = require('./index.js').V;
+var V = require('./index.js');
 var AnyValidation = V.AnyValidation;
 var valFn = V.defaultValidatorFns;
 var parseConfig = V.parseConfig;
