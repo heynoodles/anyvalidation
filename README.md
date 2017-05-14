@@ -7,7 +7,7 @@
 * 校验配置可序列化，即支持从后端传入校验逻辑 
 
 ***
-## how to use
+## quick start
 #### validatorFn
 validatorFn 是最基本的校验函数，它必须满足如下接口：
 >ValidatorFn :: param -> data -> errMsg

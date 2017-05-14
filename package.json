@@ -1,6 +1,6 @@
 {
-  "name": "template-validation",
-  "version": "1.0.0",
+  "name": "anyvalidation",
+  "version": "0.0.1",
   "description": "a configurable template validator",
   "main": "index.js",
   "scripts": {},
