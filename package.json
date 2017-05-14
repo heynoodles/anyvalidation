@@ -1,0 +1,11 @@
+{
+  "name": "template-validation",
+  "version": "1.0.0",
+  "description": "a configurable template validator",
+  "main": "index.js",
+  "scripts": {},
+  "author": "gaoxin.wei",
+  "license": "ISC",
+  "dependencies": {
+  }
+}
