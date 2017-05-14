@@ -1,6 +1,7 @@
 # anyvalidation
 一个可重用、可扩展的模型校验模块
 
+## features
 * 校验函数可扩展，可以自己定义符合ValidatorFn接口的校验函数
 * 校验函数高度重用，一个复杂的校验逻辑可由基本校验函数组合而成
 * 与数据模型解耦，支持任意数据模型
@@ -21,6 +22,10 @@ validatorFn 是最基本的校验函数，它必须满足如下接口：
 
 比如小于等于的校验函数如下：
 
+    var V = require('anyvalidation');    
+    var valFn = V.defaultValidatorFns;
+    var lessEqualThan = valFn.lessEqualThan;
+    
     var lessEqualThan = function(num) {
         return function (data) {
             if (data > num) {
@@ -29,8 +34,10 @@ validatorFn 是最基本的校验函数，它必须满足如下接口：
        }
     }
 
-比如，我们要校验某个输入是数字，且范围为[1, 9999999999], 则可写成如下：
 
+> V.defaultValidatorFns提供了一些常用ValidatorFn
+
+比如，我们要校验某个输入是数字，且范围为[1, 9999999999], 则可写成如下：
     
     var validator = prefix("单次购买下限", some(isInteger(), largeEqualThan(1), lessEqualThan(9999999999)));
     console.log(validator("not a number"));
