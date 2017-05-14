@@ -18,13 +18,13 @@ validatorFn 是最基本的校验函数，它必须满足如下接口：
 
 比如小于等于的校验函数如下：
 
->lessEqualThan = function(num) {
->    return function (data) {
->        if (data > num) {
->            return "必须小于等于" + num;
->        }
->    }
->}
+    lessEqualThan = function(num) {
+        return function (data) {
+            if (data > num) {
+           return "必须小于等于" + num;
+       }
+       }
+    }
 
 比如，我们要校验某个输入是数字，且范围为[1, 9999999999], 则可写成如下：
 
