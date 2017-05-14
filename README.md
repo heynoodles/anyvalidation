@@ -18,168 +18,124 @@ validatorFn 是最基本的校验函数，它必须满足如下接口：
 
 比如小于等于的校验函数如下：
 
-    lessEqualThan = function(num) {
+    var lessEqualThan = function(num) {
         return function (data) {
             if (data > num) {
-           return "必须小于等于" + num;
-       }
+               return "必须小于等于" + num;
+            }
        }
     }
 
 比如，我们要校验某个输入是数字，且范围为[1, 9999999999], 则可写成如下：
 
-    console.log("/----------------- validatorFn api -------------------------/");
+    
     var validator = prefix("单次购买下限", some(isInteger(), largeEqualThan(1), lessEqualThan(9999999999)));
     console.log(validator("not a number"));
     console.log(validator(-1));
     console.log(validator(10000000000000000));
-    console.log("/----------------- validatorFn api -------------------------/");
-
+ 
 =>
 
-    /----------------- validatorFn api -------------------------/
         单次购买下限必须是数字
         单次购买下限必须大于等于1
         单次购买下限必须小于等于9999999999
-    /----------------- validatorFn api -------------------------/
 
-#### use config validatorFn api
-
-    console.log("/---------------- config validatorFn api -------------------/");
-    var validatorConfig = {
-      "type": "function",
-      "name": "prefix",
-      "params": [
-        {
-          "type": "data",
-          "value": "单次购买下限"
-        },
-        {
-          "type": "function",
-          "name": "some",
-          "params": [
-            {
-              "type": "function",
-              "name": "isInteger",
-              "params": []
-            },
-            {
-              "type": "function",
-              "name": "largeEqualThan",
-              "params": [
-                {
-                  "type": "data",
-                  "value": 1
-                }
-              ]
-            },
-            {
-              "type": "function",
-              "name": "lessEqualThan",
-              "params": [
-                {
-                  "type": "data",
-                  "value": 9999999999
-                }
-              ]
-            },
-          ]
-        }
-      ]
-    };
-    var configValidator = parseConfig(validatorConfig);
-    console.log(configValidator("not a number"));
-    console.log(configValidator(-1));
-    console.log(configValidator(10000000000000000));
-    console.log("/---------------- config validatorFn api -------------------/");
-
-=>
-
-    /---------------- config validatorFn api -------------------/
-        单次购买下限必须是数字
-        单次购买下限必须大于等于1
-        单次购买下限必须小于等于9999999999
-    /---------------- config validatorFn api -------------------/
-
-
-#### use template validator api
-
-    console.log("/---------------- template validator api -------------------/");
-    var bizData = {
-        "user": {
-           "age": "not a number",
-            "name": "hello kitty"
-        },
-        "count": null
-    };
-
+#### 模型校验
     var validatorInfo = [
-        {
-            "resolvePath": ["count"],
-            "validatorConfig": {
-                "type": "function",
-                "name": "prefix",
-                "params": [
-                    {
-                        "type": "data",
-                        "value": "数量"
-                    },
-                    {
-                        "type": "function",
-                        "name": "some",
-                        "params": [
-                            {
-                                "type": "function",
-                                "name": "required",
-                                "params": []
-                            },
-                            {
-                                "type": "function",
-                                "name": "isInteger",
-                                "params": []
-                            }
-                        ]
-                    }
-                ]
-            }
-        },
-        {
-            "resolvePath": ["user", "age"],
-            "validatorConfig": {
-                "type": "function",
-                "name": "prefix",
-                "params": [
-                    {
-                        "type": "data",
-                        "value": "年龄"
-                    },
-                    {
-                        "type": "function",
-                        "name": "some",
-                        "params": [
-                            {
-                                "type": "function",
-                                "name": "required",
-                                "params": []
-                            },
-                            {
-                                "type": "function",
-                                "name": "isInteger",
-                                "params": []
-                            }
-                        ]
-                    }
-                ]
-            }
-        }
+     {
+        "resolvePath": ["count"],
+        "validatorFn": prefix("数量", some(required(), isInteger()))
+      },
+      {
+        "resolvePath": ["user", "age"],
+        "validatorFn": prefix("年龄", some(required(), isInteger()))
+      }
     ];
+    var anyVali = new AnyValidation(validatorInfo, propertyResolver);
+    console.log(anyVali.validateAll(bizData));
+    console.log(anyVali.validateOne(["user", "age"], "not a number"));
 
-    var templateValidator = validateAll(validatorInfo, propertyResolver);
-    console.log(templateValidator(bizData));
-    console.log("/---------------- template validator api -------------------/");
+=>
 
-=> 
+    [ { key: 'count', errMsg: '数量必填' },
+      { key: 'user_age', errMsg: '年龄必须是数字' } ]
+    年龄必须是数字
 
-    /---------------- template validator api -------------------/
-        [ { key: 'count', errMsg: '数量必填' }, { key: 'user_age', errMsg: '年龄必须是数字' } ]
-    /---------------- template validator api -------------------/
+
+#### 校验配置化
+
+    var validatorInfo2 = [
+    {
+        "resolvePath": ["count"],
+        "validatorConfig": {
+            "type": "function",
+            "name": "prefix",
+            "params": [
+                {
+                    "type": "data",
+                    "value": "数量"
+                },
+                {
+                    "type": "function",
+                    "name": "some",
+                    "params": [
+                    
+                    {
+                            "type": "function",
+                            "name": "whateverWrong",
+                            "params": []
+                        },
+                        {
+                            "type": "function",
+                            "name": "required",
+                            "params": []
+                        },
+                        {
+                            "type": "function",
+                            "name": "isInteger",
+                            "params": []
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "resolvePath": ["user", "age"],
+        "validatorConfig": {
+            "type": "function",
+            "name": "prefix",
+            "params": [
+                {
+                    "type": "data",
+                    "value": "年龄"
+                },
+                {
+                    "type": "function",
+                    "name": "some",
+                    "params": [
+                        {
+                            "type": "function",
+                            "name": "required",
+                            "params": []
+                        },
+                        {
+                            "type": "function",
+                            "name": "isInteger",
+                            "params": []
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+    ];
+    var anyValidation = new AnyValidation(validatorInfo2, propertyResolver, {fromConfig: true, extendValidatorFns: extendValidatorFns})
+    console.log(anyValidation.validateAll(bizData));
+    console.log(anyValidation.validateOne(["user", "age"], "jajajajajaja"))
+
+=>
+
+    [ { key: 'count', errMsg: '数量WRONG!!' },
+      { key: 'user_age', errMsg: '年龄必须是数字' } ]
+    年龄必须是数字
