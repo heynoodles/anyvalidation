@@ -116,6 +116,12 @@ bizData树上的每个节点都有可能被加上约束。
 在不同的操作场景下，有时需要校验某个节点，有时需要全量校验。
 于是，我们把所有需要校验的节点打平，组成一个校验信息的数组**validatorInfo**。
 通过**AnyValidation**，可以实现模型校验
+### AnyValidation
+| 参数名 | 描述 | 说明 |
+| :--- | :----: | ----: |
+| validatorInfo | 打平的校验配置信息 | 是一个数组。每个节点由resolvePath和校验信息组成 |
+|  propertyResolver   | 从bizData中获取被校验值的函数     | 入参是resolvePath，系统已经提供propertyResolver（针对普通js对象），immuPropertyResolver（immutablejs）均挂在 V.propertyResolvers下，也可根据不同的状态管理方案做定制化     |
+| opts | 可选选项 | fromConfig: vailidatorInfo是否为json方式， extendValidatorFns扩展ValidatorFn |
 
     var V = require('anyvalidation');    
     var AnyValidation = V.AnyValidation;
