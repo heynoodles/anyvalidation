@@ -6,6 +6,10 @@
   "license": "ISC",
   "main": "index.js",
   "name": "anyvalidation",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heynoodles/anyvalidation"
+  },
   "scripts": {},
-  "version": "0.0.3"
+  "version": "0.0.4"
 }
