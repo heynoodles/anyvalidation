@@ -14,7 +14,13 @@
 ## quick start
     var V = require('anyvalidation');    
     var AnyValidation = V.AnyValidation;
+    var dvfs = V.defaultValidatorFns;
     var propertyResolver = V.propertyResolvers.propertyResolver;
+    var prefix = dvfs.prefix;
+    var some = dvfs.some;
+    var isInteger = dvfs.isInteger;
+    var largeEqualThan = dvfs.largeEqualThan;
+    var lessEqualThan = dvfs.lessEqualThan;
     
     var bizData = {
       "user": {
