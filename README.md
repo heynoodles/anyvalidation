@@ -12,8 +12,34 @@
 > npm install anyvalidation
 
 ## quick start
+    var V = require('anyvalidation');    
+    var AnyValidation = V.AnyValidation;
+    var propertyResolver = V.propertyResolvers.propertyResolver;
+    
+    var bizData = {
+      "user": {
+         "age": "not a number",
+         "name": "hello kitty"
+        },
+      "count": null
+    };
+    var validatorInfo = [
+     {
+        "resolvePath": ["count"],
+        "validatorFn": prefix("数量", some(required(), isInteger()))
+      },
+      {
+        "resolvePath": ["user", "age"],
+        "validatorFn": prefix("年龄", some(required(), isInteger()))
+      }
+    ];
+    var anyVali = new AnyValidation(validatorInfo, propertyResolver);
+    console.log(anyVali.validateAll(bizData));
+    console.log(anyVali.validateOne(["user", "age"], "not a number"));
 
-#### ValidatorFn
+
+
+## ValidatorFn
 ValidatorFn 是最基本的校验函数，它必须满足如下接口：
 > ValidatorFn :: param -> data -> errMsg
 
@@ -75,8 +101,25 @@ ValidatorFn 是最基本的校验函数，它必须满足如下接口：
         单次购买下限必须大于等于1
         单次购买下限必须小于等于9999999999
 
-#### 模型校验
+## 模型校验
+经常，我们需要校验一个页面的业务数据。业务数据本质上一棵树。
 
+    var bizData = {
+      "user": {
+         "age": "not a number",
+         "name": "hello kitty"
+        },
+      "count": null
+    };
+
+bizData树上的每个节点都有可能被加上约束。
+在不同的操作场景下，有时需要校验某个节点，有时需要全量校验。
+于是，我们把所有需要校验的节点打平，组成一个校验信息的数组**validatorInfo**。
+通过**AnyValidation**，可以实现模型校验
+
+    var V = require('anyvalidation');    
+    var AnyValidation = V.AnyValidation;
+    var propertyResolver = V.propertyResolvers.propertyResolver;
 
     var validatorInfo = [
      {
@@ -99,8 +142,19 @@ ValidatorFn 是最基本的校验函数，它必须满足如下接口：
     年龄必须是数字
 
 
-#### 校验配置化
+## 校验配置化
+有时，校验逻辑需要从后端传给前端，我们只需把AnyValidation的fromConfig设置为true，并调整**validatorInfo**。
 
+    var V = require('anyvalidation');    
+    var AnyValidation = V.AnyValidation;
+    var propertyResolver = V.propertyResolvers.propertyResolver;
+    var extendValidatorFns = {
+        "whateverWrong": function() {
+            return function(data) {
+                return "WRONG!!";
+            }
+        }   
+    }
     var validatorInfo2 = [
     {
         "resolvePath": ["count"],
