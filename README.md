@@ -8,23 +8,26 @@
 * 校验配置可序列化，即支持从后端传入校验逻辑 
 
 ***
-## how to install
+## install
 > npm install anyvalidation
 
 ## quick start
-#### validatorFn
-validatorFn 是最基本的校验函数，它必须满足如下接口：
->ValidatorFn :: param -> data -> errMsg
+
+#### ValidatorFn
+ValidatorFn 是最基本的校验函数，它必须满足如下接口：
+> ValidatorFn :: param -> data -> errMsg
 
 其中，param生成校验函数的参数；
      data表示被校验的数据；
      errMsg表示返回的错误信息，如果没有错则返回undefined
 
-比如小于等于的校验函数如下：
-
+> V.defaultValidatorFns提供了一些常用ValidatorFn
     var V = require('anyvalidation');    
-    var valFn = V.defaultValidatorFns;
-    var lessEqualThan = valFn.lessEqualThan;
+    var dvfs = V.defaultValidatorFns;
+
+比如，可以从defaultValidatorFns中获取**小于等于**的校验函数如下：
+
+    var lessEqualThan = dvfs.lessEqualThan;
     
     var lessEqualThan = function(num) {
         return function (data) {
@@ -33,13 +36,35 @@ validatorFn 是最基本的校验函数，它必须满足如下接口：
             }
        }
     }
+可以看到，lessEqualThan本身并不能直接用作校验函数，只有将num传入后，才会制造出一个**小于等于num**的函数。
 
+> 过程抽象也是ValidatorFn
 
-> V.defaultValidatorFns提供了一些常用ValidatorFn
+经常，一个字段的校验是有很多简单约束组合而成。
+比如，我们要校验某个输入是数字，且范围为[1, 9999999999]。
+这里可以将整个约束拆解为：
+1. 数字
+2. 大于等于1
+3. 小于等于9999999999
+4. 过程：某一个校验函数验证失败，则直接结束返回errMsg, 否则下一个校验函数
 
-比如，我们要校验某个输入是数字，且范围为[1, 9999999999], 则可写成如下：
-    
-    var validator = prefix("单次购买下限", some(isInteger(), largeEqualThan(1), lessEqualThan(9999999999)));
+其中，第4个过程约束也抽象为ValidatorFn，即**some**。
+> Some :: [ValidatorFn] -> data -> errMsg
+不同的是，它的第一个入参param为各校验函数。
+
+有时，我们的errMsg需要一些修饰，比如说“单次购买下限小于1...”，即在原本的校验结果中再加入点主语。
+于是，就可用过程**prefix**，它也是ValidatorFn
+> prefix :: ("some subject" -> ValidatorFn) -> data -> errMsg
+
+以上的复杂校验可以写成如下方式：
+
+    var prefix = dvfs.prefix;
+    var some = dvfs.some;
+    var isInteger = dvfs.isInteger;
+    var largeEqualThan = dvfs.largeEqualThan;
+    var lessEqualThan = dvfs.lessEqualThan;
+    var validator = prefix("单次购买下限", some(isInteger(), largeEqualThan(1), 
+    lessEqualThan(9999999999)));
     console.log(validator("not a number"));
     console.log(validator(-1));
     console.log(validator(10000000000000000));
@@ -51,6 +76,8 @@ validatorFn 是最基本的校验函数，它必须满足如下接口：
         单次购买下限必须小于等于9999999999
 
 #### 模型校验
+
+
     var validatorInfo = [
      {
         "resolvePath": ["count"],

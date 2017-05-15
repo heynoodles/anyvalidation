@@ -1,11 +1,11 @@
 {
-  "name": "anyvalidation",
-  "version": "0.0.2",
-  "description": "a configurable template validator",
-  "main": "index.js",
-  "scripts": {},
   "author": "gaoxin.wei",
+  "dependencies": {},
+  "description": "a configurable template validator",
+  "homepage": "https://github.com/heynoodles/anyvalidation",
   "license": "ISC",
-  "dependencies": {
-  }
+  "main": "index.js",
+  "name": "anyvalidation",
+  "scripts": {},
+  "version": "0.0.2"
 }
