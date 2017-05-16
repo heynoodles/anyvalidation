@@ -21,7 +21,7 @@
     var isInteger = dvfs.isInteger;
     var largeEqualThan = dvfs.largeEqualThan;
     var lessEqualThan = dvfs.lessEqualThan;
-    
+
     var bizData = {
       "user": {
          "age": "not a number",
@@ -122,7 +122,7 @@ bizData树上的每个节点都有可能被加上约束。
 在不同的操作场景下，有时需要校验某个节点，有时需要全量校验。
 于是，我们把所有需要校验的节点打平，组成一个校验信息的数组**validatorInfo**。
 通过**AnyValidation**，可以实现模型校验
-### AnyValidation
+### AnyValidation(validatorInfo, propertyResolver, opts={})
 | 参数名 | 描述 | 说明 |
 | :--- | :--- | :--- |
 | validatorInfo | 打平的校验配置信息 | 是一个数组。每个节点由resolvePath和校验信息组成 |
