@@ -21,6 +21,8 @@
     var isInteger = dvfs.isInteger;
     var largeEqualThan = dvfs.largeEqualThan;
     var lessEqualThan = dvfs.lessEqualThan;
+    var required = dvfs.required;
+
 
     var bizData = {
       "user": {
